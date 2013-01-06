@@ -91,16 +91,19 @@ typedef enum {
 
 - (id) initWithFrame: (CGRect) frame reuseIdentifier: (NSString *) reuseIdentifier;
 
++(NSString *)nibReuseIdentifier;
++(id)cellFromNib;
+
 // If you want to customize cells by simply adding additional views, you should add them to the content view so they will be positioned appropriately as the cell transitions into and out of editing mode.
-@property (nonatomic, readonly, retain) UIView * contentView;
+@property (nonatomic, retain) IBOutlet UIView * contentView;
 
 // default is nil. The background view will be added as a subview behind all other views
-@property (nonatomic, retain) UIView * backgroundView;
+@property (nonatomic, retain) UIView IBOutlet * backgroundView;
 
 // The 'selectedBackgroundView' will be added as a subview directly above the backgroundView if not nil, or behind all other views. It is added as a subview only when the cell is selected. Calling -setSelected:animated: will cause the 'selectedBackgroundView' to animate in and out with an alpha fade.
-@property (nonatomic, retain) UIView * selectedBackgroundView;
+@property (nonatomic, retain) UIView IBOutlet * selectedBackgroundView;
 
-@property (nonatomic, readonly, copy) NSString * reuseIdentifier;
+@property (nonatomic, copy) NSString * reuseIdentifier;
 - (void) prepareForReuse;		// if the cell is reusable (has a reuse identifier), this is called just before the cell is returned from the grid view method dequeueReusableCellWithIdentifier:.  If you override, you MUST call super.
 
 @property (nonatomic) AQGridViewCellSelectionStyle selectionStyle;		// default is AQGridViewCellSelectionStyleGlow

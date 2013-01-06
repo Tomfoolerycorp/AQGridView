@@ -45,8 +45,6 @@
 #endif
 
 @interface AQGridViewCell ()
-@property (nonatomic, retain) UIView * contentView;
-@property (nonatomic, copy) NSString * reuseIdentifier;
 - (void) flipHighlightTimerFired: (NSTimer *) timer;
 @end
 
@@ -55,6 +53,47 @@
 @synthesize contentView=_contentView, backgroundView=_backgroundView, selectedBackgroundView=_selectedBackgroundView;
 @synthesize reuseIdentifier=_reuseIdentifier, selectionGlowColor=_selectionGlowColor;
 @synthesize selectionGlowShadowRadius=_selectionGlowShadowRadius;
+
+
++(NSString *)nibReuseIdentifier
+{
+    return NSStringFromClass([self class]);
+}
+
++ (id) cellFromNib
+{
+    static NSMutableDictionary *nibCache = nil;
+    
+    NSString *nibName = NSStringFromClass([self class]);
+    
+    UINib *nib = nil;
+    
+    if ( !nibCache )
+        nibCache = [NSMutableDictionary dictionary];
+
+    nib = [nibCache objectForKey:nibName];
+    
+    if ( !nib )
+    {
+        nib = [UINib nibWithNibName:NSStringFromClass([self class])  bundle:nil];
+        
+        if ( !nib )
+            return nil;
+        
+        [nibCache setValue:nib forKey:nibName];
+    }
+    
+    AQGridViewCell *cell = [[[self class] alloc] init];
+    
+	[nib instantiateWithOwner:cell options:nil];
+    
+    cell.frame = cell.contentView.bounds;
+    
+    [cell awakeFromNib];
+    
+    return cell;
+}
+
 
 - (id) initWithFrame: (CGRect) frame reuseIdentifier: (NSString *) reuseIdentifier
 {
@@ -81,6 +120,8 @@
 
 - (void) awakeFromNib
 {
+    [super awakeFromNib];
+
     _cellFlags.usingDefaultSelectedBackgroundView = 1;
 	_cellFlags.separatorStyle = AQGridViewCellSeparatorStyleEmptySpace;
 	
@@ -88,10 +129,24 @@
 		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGlow;
 	else
 		_cellFlags.selectionStyle = AQGridViewCellSelectionStyleGray;
+    _cellFlags.setShadowPath = 0;
 	_selectionColorInfo = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,  &kCFTypeDictionaryValueCallBacks );
 	self.backgroundColor = [UIColor whiteColor];
     
-    [super awakeFromNib];
+ 	_selectionGlowShadowRadius = 12.0f;
+    
+   if ( _contentView )
+    {
+        _contentView.frame = self.bounds;
+        _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        _contentView.autoresizesSubviews = YES;
+        self.autoresizesSubviews = YES;
+		[_contentView.layer setValue: [NSNumber numberWithBool: YES] forKey: @"KoboHackInterestingLayer"];
+        [self addSubview: _contentView];
+    }
+        
+    if ( !self.reuseIdentifier )
+        self.reuseIdentifier = [[self class] nibReuseIdentifier];
 }
 
 - (void) dealloc
