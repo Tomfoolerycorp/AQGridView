@@ -517,7 +517,7 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	    CGFloat statusHeight = MIN(CGRectGetWidth(statusRect), CGRectGetHeight(statusRect))  - 20;
 
 	    CGFloat footerHeight = CGRectGetHeight(self.gridFooterView.bounds);
-	    CGFloat minimumHeight = statusHeight + CGRectGetHeight(self.bounds) + footerHeight;
+	    CGFloat minimumHeight = statusHeight + CGRectGetHeight(self.bounds) - footerHeight;
 	    if (newSize.height < footerHeight + minimumHeight)
 	        newSize.height = minimumHeight;
 	}
@@ -713,10 +713,9 @@ NSString * const AQGridViewSelectionDidChangeNotification = @"AQGridViewSelectio
 	{
 		rect = _footerView.frame;
 		rect.origin.x = 0.0;
-		rect.origin.y  = self.contentSize.height - rect.size.height;
+		rect.origin.y  = [_gridData actualContentHeight] - rect.size.height;
 		rect.size.width = self.bounds.size.width;
 		_footerView.frame = rect;
-		[self bringSubviewToFront:_footerView];
 	}
 }
 

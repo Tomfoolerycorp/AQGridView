@@ -152,6 +152,21 @@
 	return ( rect );
 }
 
+
+-(CGFloat) actualContentHeight
+{
+	NSUInteger numPerRow = [self numberOfItemsPerRow];
+    
+    if ( numPerRow == 0 )       // avoid a divide-by-zero exception
+        return 0;
+	NSUInteger numRows = _numberOfItems / numPerRow;
+	if ( _numberOfItems % numPerRow != 0 )
+		numRows++;
+	
+	return ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
+}
+
+
 - (CGSize) sizeForEntireGrid
 {
 	NSUInteger numPerRow = [self numberOfItemsPerRow];
@@ -160,11 +175,12 @@
 	NSUInteger numRows = _numberOfItems / numPerRow;
 	if ( _numberOfItems % numPerRow != 0 )
 		numRows++;
-	
-	CGFloat height = ( ((CGFloat)ceilf((CGFloat)numRows * _actualCellSize.height)) + _topPadding + _bottomPadding );
+    
+	CGFloat height = [self actualContentHeight];
+    
 	if (height < _gridView.bounds.size.height)
 		height = _gridView.bounds.size.height;
-	
+    
 	return ( CGSizeMake(((CGFloat)ceilf(_actualCellSize.width * numPerRow)) + _leftPadding + _rightPadding, height) );
 }
 

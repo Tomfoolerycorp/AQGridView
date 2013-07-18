@@ -77,6 +77,7 @@
 - (CGSize) cellSize;
 
 // metrics used within the scroll view
+-(CGFloat) actualContentHeight;
 - (CGRect) rectForEntireGrid;
 - (CGSize) sizeForEntireGrid;
 - (NSUInteger) numberOfItemsPerRow;
